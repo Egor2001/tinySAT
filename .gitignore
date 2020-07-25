@@ -1,3 +1,10 @@
+# Custom
+theory/
+bin/
+obj/
+tags
+*.tags
+
 # Prerequisites
 *.d
 
