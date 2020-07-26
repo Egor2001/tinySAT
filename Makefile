@@ -12,11 +12,15 @@ BINDIR= bin
 OBJDIR= obj
 
 TARGET= main
+
 SRCFILES= main.cpp \
 	  $(SRCDIR)/SMatch.cpp \
 	  $(SRCDIR)/SFormula.cpp \
 	  $(SRCDIR)/CBinarySolver.cpp \
 	  $(SRCDIR)/CGeneralSolver.cpp
+
+HDRFILES= include/misc/CGraph.hpp
+
 OBJFILES= $(patsubst %.cpp,$(OBJDIR)/%.o,$(notdir $(SRCFILES)))
 
 TAGFILE= tags
@@ -29,7 +33,7 @@ $(TARGET): $(OBJFILES)
 	mkdir -p $(BINDIR)
 	$(LD) $(LFLAGS) $(OBJFILES) -o $(BINDIR)/$(TARGET)
 
-$(OBJFILES): $(SRCFILES)
+$(OBJFILES): $(SRCFILES) $(HDRFILES)
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(patsubst %,-I%,$(INCLUDE)) -c $(SRCFILES)
 	mv *.o $(OBJDIR)

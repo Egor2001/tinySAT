@@ -2,11 +2,14 @@
 #define TINYSAT_CBINARYSOLVER_HPP_
 
 #include <vector>
+#include <set>
 #include <memory>
 
 #include "CMatchIterator.hpp"
 #include "CException.hpp"
 #include "SFormula.hpp"
+
+#include "misc/CGraph.hpp"
 
 namespace tinysat {
 
@@ -41,12 +44,13 @@ public:
 
 protected:
     void init();
+    void set_match(CContext&) const;
 
 private:
     SFormula formula_;
 
     std::vector<size_t> comp_vec_;
-    std::vector<std::vector<size_t>> cond_edge_vec_;
+    CGraph<std::set> comp_graph_;
 };
 
 // Context incapsulating data for the CBinarySolver algorithm
@@ -57,6 +61,11 @@ private:
 class CBinarySolver::CContext
 {
 public:
+    friend class CBinarySolver;
+
+    explicit CContext(const std::vector<size_t>& order_vec);
+    explicit CContext(std::vector<size_t>&& order_vec);
+
     CContext             (const CContext&) = default;
     CContext& operator = (const CContext&) = default;
 
@@ -68,11 +77,8 @@ public:
     friend bool operator == (const CContext& lhs, const CContext& rhs);
     friend bool operator != (const CContext& lhs, const CContext& rhs);
 
-protected:
-    CContext(const std::vector<size_t>& order_vec);
-    CContext(std::vector<size_t>&& order_vec);
-
 private:
+    SMatch match_;
     std::vector<size_t> order_vec_;
 };
 
