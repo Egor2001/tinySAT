@@ -422,6 +422,8 @@ CBacktrackList<TData>::extract(const CIterator iter)
 
     entry->next.reset();
 
+    --size_;
+
     return CNode(std::move(node_ptr));
 }
 
@@ -441,6 +443,8 @@ CBacktrackList<TData>::restore(CNode&& node)
         node.entry_ptr_->next = std::move(head_);
         head_ = std::move(node.entry_ptr_);
     }
+
+    ++size_;
 
     return result;
 }

@@ -648,6 +648,9 @@ CBacktrackSkiplist<TData>::find(const TData& value)
         --log;
     }
 
+    if (idx == NULL_IDX || data_vec_[idx] < value || value < data_vec_[idx])
+        idx = NULL_IDX;
+
     return CIterator(this, idx);
 }
 

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "CSolverContext.hpp"
+#include "CDpllContext.hpp"
 
 using namespace tinysat;
 
@@ -14,16 +14,12 @@ int main()
             { 2, 5 },
             { -3, 4, -5 },
             { 1 },
+//            { -1 },
         }
     };
 
-    SDpllFormula dpll_formula(std::move(formula));
-
-    auto state = dpll_formula.get_state();
-    auto prop_res = dpll_formula.propagate(-1);
-    // auto back_res = dpll_formula.backtrack(state);
-
-    std::cout << "conflict = " << prop_res.conflict << '\n';
+    CDpllContext context(formula);
+    std::cout << context.init();
 
     return 0;
 }
