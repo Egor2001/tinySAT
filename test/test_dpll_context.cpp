@@ -13,13 +13,14 @@ int main()
             { 1, 3 },
             { 2, 5 },
             { -3, 4, -5 },
-            { 1 },
-//            { -1 },
+            { -1 },
         }
     };
 
     CDpllContext context(formula);
-    std::cout << context.init();
+    std::cout << context.init() << "\n";
+    std::cout << context.match() << "\n";
+
 
     return 0;
 }
