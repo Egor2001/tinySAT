@@ -1,6 +1,8 @@
 # Custom
 theory/
+build/
 bin/
+lib/
 obj/
 tags
 *.tags
