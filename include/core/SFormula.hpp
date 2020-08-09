@@ -1,8 +1,29 @@
-#include "SFormula.hpp"
+#ifndef TINYSAT_SFORMULA_HPP_
+#define TINYSAT_SFORMULA_HPP_
+
+#include <cstdint>
+
+#include <vector>
+#include <iostream>
+
+#include "SMatch.hpp"
 
 namespace tinysat {
 
-bool SFormula::is_match(const SMatch& match) const
+struct SFormula;
+
+template<typename TStream>
+TStream& operator << (TStream&, const SFormula&);
+
+struct SFormula
+{
+    [[nodiscard]] inline bool is_match(const SMatch&) const;
+
+    size_t params_cnt;
+    std::vector<std::vector<int32_t>> clause_vec;
+};
+
+inline bool SFormula::is_match(const SMatch& match) const
 {
     if (this->params_cnt != match.value_vec.size())
         return false;
@@ -31,7 +52,8 @@ bool SFormula::is_match(const SMatch& match) const
     return result;
 }
 
-std::ostream& operator << (std::ostream& stream, const SFormula& formula)
+template<typename TStream>
+TStream& operator << (TStream& stream, const SFormula& formula)
 {
     stream << "[ ";
     stream << "p " << formula.params_cnt << " ";
@@ -52,3 +74,5 @@ std::ostream& operator << (std::ostream& stream, const SFormula& formula)
 }
 
 } // namespace tinysat
+
+#endif // TINYSAT_SFORMULA_HPP_

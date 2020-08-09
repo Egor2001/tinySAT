@@ -115,13 +115,6 @@ void CBinarySolver::set_match(CContext& context) const
     }
 }
 
-/*
-    SFormula formula_;
-
-    std::vector<size_t> comp_vec_;
-    CGraph<std::set> comp_graph_;
-*/
-
 CBinarySolver::CContext::
 CContext(const std::vector<size_t>& order_vec):
     match_{},
@@ -152,9 +145,5 @@ bool operator != (const CBinarySolver::CContext& lhs,
 {
     return !(lhs == rhs);
 }
-
-/*
-    std::vector<size_t> order_vec_;
-*/
 
 } // namespace tinysat 
