@@ -1,6 +1,7 @@
 # Custom
 theory/
 build/
+third-party/*
 bin/
 lib/
 obj/

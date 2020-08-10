@@ -1,10 +1,12 @@
 #include <iostream>
 
-#include "CDpllContext.hpp"
+#include "CDpllSolver.hpp"
+
+#include "gtest/gtest.h"
 
 using namespace tinysat;
 
-int main()
+TEST(DpllTest, init)
 {
     SFormula formula = {
         .params_cnt = 5u,
@@ -18,9 +20,10 @@ int main()
     };
 
     CDpllContext context(formula);
-    std::cout << context.init() << "\n";
-    std::cout << context.match() << "\n";
-
-
-    return 0;
+    ASSERT_EQ(context.init(), true);
+    /*
+    ASSERT_EQ(context.match(), SMatch{ {...} });
+    ASSERT_EQ(context.next(), true);
+    ASSERT_EQ(context.match(), SMatch{ {...} });
+    */
 }

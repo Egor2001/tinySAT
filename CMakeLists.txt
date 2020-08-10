@@ -9,13 +9,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+set(THIRD_PARTY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/third-party)
 
 set(SOURCES 
 	src/CBinarySolver.cpp
 	src/CGeneralSolver.cpp
     src/CDpllSolver.cpp
     )
+
+include(ExternalProject)
+
+ExternalProject_Add(gtest_git 
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG master
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${THIRD_PARTY_INSTALL_DIR}
+    )
+
+include_directories(${THIRD_PARTY_INSTALL_DIR}/include)
+link_directories(${THIRD_PARTY_INSTALL_DIR}/lib)
 
 add_executable(tinySAT main.cpp ${SOURCES})
 
@@ -27,6 +38,8 @@ target_include_directories(tinySAT
 
 add_subdirectory(include/dpll)
 target_link_libraries(tinySAT dpll)
+
+add_subdirectory(test)
 
 set(CTAGS ctags)
 set(TAGS tags)
