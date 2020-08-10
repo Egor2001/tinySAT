@@ -25,16 +25,18 @@ ExternalProject_Add(gtest_git
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${THIRD_PARTY_INSTALL_DIR}
     )
 
-include_directories(${THIRD_PARTY_INSTALL_DIR}/include)
-link_directories(${THIRD_PARTY_INSTALL_DIR}/lib)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/dpll
+    ${CMAKE_SOURCE_DIR}/include/core
+    ${THIRD_PARTY_INSTALL_DIR}/include)
+
+link_directories(
+    ${CMAKE_SOURCE_DIR}/lib
+    ${THIRD_PARTY_INSTALL_DIR}/lib
+    )
 
 add_executable(tinySAT main.cpp ${SOURCES})
-
-target_include_directories(tinySAT 
-    PUBLIC ${PROJECT_SOURCE_DIR}/
-    PUBLIC ${PROJECT_SOURCE_DIR}/include/
-    PUBLIC ${PROJECT_SOURCE_DIR}/include/core
-    )
 
 add_subdirectory(include/dpll)
 target_link_libraries(tinySAT dpll)

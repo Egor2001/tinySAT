@@ -6,7 +6,7 @@
 
 using namespace tinysat;
 
-TEST(DpllTest, init)
+TEST(DpllSolverTest, proceed)
 {
     SFormula formula = {
         .params_cnt = 5u,
@@ -19,11 +19,6 @@ TEST(DpllTest, init)
         }
     };
 
-    CDpllContext context(formula);
-    ASSERT_EQ(context.init(), true);
-    /*
-    ASSERT_EQ(context.match(), SMatch{ {...} });
-    ASSERT_EQ(context.next(), true);
-    ASSERT_EQ(context.match(), SMatch{ {...} });
-    */
+    auto solver = CDpllSolver(formula);
+    ASSERT_NE(solver.begin(), solver.end());
 }

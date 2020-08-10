@@ -30,14 +30,14 @@ bool CDpllContext::next()
     {
         auto& top = state_stack_.top();
 
-        top.val = (top.val == SMatch::EValue::TRUE ? 
+        top.val = ((top.val == SMatch::EValue::TRUE) ? 
                    SMatch::EValue::FALSE : SMatch::EValue::NONE);
 
         assignment_.backtrack(top.assignment_state);
         formula_.backtrack(top.formula_state);
     }
 
-    return (state_stack_.empty() ? false : search());
+    return search();
 }
 
 bool CDpllContext::search()

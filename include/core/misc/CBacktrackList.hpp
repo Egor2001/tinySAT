@@ -469,6 +469,8 @@ push_back(const TData& data)
         tail_ = head_.get();
     }
 
+    ++size_;
+
     return CIterator(this, tail_);
 }
 
@@ -491,6 +493,8 @@ push_back(TData&& data)
                 .next = {}, .prev = nullptr });
         tail_ = head_.get();
     }
+
+    ++size_;
 
     return CIterator(this, tail_);
 }

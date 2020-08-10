@@ -53,6 +53,9 @@ bool CDpllAssignment::dump(TStream& stream) const noexcept
 
 void CDpllAssignment::assign(const int lit)
 {
+    if (lit == 0)
+        throw CException("error: assigning zero literal");
+
     if (match_.value_vec[std::abs(lit) - 1u] != SMatch::EValue::NONE)
         throw CException("error: reassigning literal");
 
@@ -65,6 +68,9 @@ void CDpllAssignment::assign(const int lit)
 
 void CDpllAssignment::revert(const int lit)
 {
+    if (lit == 0)
+        throw CException("error: reverting zero literal");
+
     if (match_.value_vec[std::abs(lit) - 1u] == SMatch::EValue::NONE)
         throw CException("error: reverting not assigned literal");
 
