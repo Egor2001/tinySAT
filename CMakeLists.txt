@@ -27,8 +27,8 @@ ExternalProject_Add(gtest_git
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/include/dpll
     ${CMAKE_SOURCE_DIR}/include/core
+    ${CMAKE_SOURCE_DIR}/dpll
     ${THIRD_PARTY_INSTALL_DIR}/include)
 
 link_directories(
@@ -38,7 +38,7 @@ link_directories(
 
 add_executable(tinySAT main.cpp ${SOURCES})
 
-add_subdirectory(include/dpll)
+add_subdirectory(dpll)
 target_link_libraries(tinySAT dpll)
 
 add_subdirectory(test)

@@ -20,5 +20,8 @@ TEST(DpllSolverTest, proceed)
     };
 
     auto solver = CDpllSolver(formula);
-    ASSERT_NE(solver.begin(), solver.end());
+    auto it = solver.begin(), end = solver.end();
+
+    ASSERT_NE(it, end);
+    ASSERT_TRUE(formula.is_match(*it));
 }

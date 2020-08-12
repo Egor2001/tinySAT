@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "dpll/include/CDpllContext.hpp"
+#include "include/CDpllContext.hpp"
 
 #include "gtest/gtest.h"
 

@@ -8,7 +8,7 @@
 #include "SFormula.hpp"
 #include "SMatch.hpp"
 
-#include "dpll/include/CDpllContext.hpp"
+#include "include/CDpllContext.hpp"
 
 namespace tinysat {
 
