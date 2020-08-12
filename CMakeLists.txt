@@ -41,19 +41,16 @@ add_executable(tinySAT main.cpp ${SOURCES})
 add_subdirectory(dpll)
 target_link_libraries(tinySAT dpll)
 
+# Tests generated with GTest
 add_subdirectory(test)
 
-set(CTAGS ctags)
-set(TAGS tags)
+# Docs generated with Doxygen
+add_subdirectory(docs)
+add_custom_target(docs DEPENDS tinySAT-docs dpll-docs)
 
-add_custom_target(tags)
-add_custom_command(TARGET tags
-    PRE_BUILD
-    COMMAND ${CTAGS}
-    ARGS -Rf ${TAGS}
-    BYPRODUCTS ${TAGS}
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    )
+# Tags generated with CTags
+add_subdirectory(tags)
+add_custom_target(tags DEPENDS tinySAT-tags dpll-tags)
 
 install(TARGETS tinySAT
     RUNTIME DESTINATION bin
