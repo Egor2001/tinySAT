@@ -24,7 +24,7 @@ $ make tags
 ```
 
 ## Contacts
-- [telegram](t.me/geome_try)
+- [telegram](https://t.me/geome_try)
 - mail:
   - elchinov.es@phystech.edu
   - elchinov.es@gmail.com
