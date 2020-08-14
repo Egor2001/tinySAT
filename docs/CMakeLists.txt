@@ -13,8 +13,8 @@ if(DOXYGEN_FOUND)
         )
 
     doxygen_add_docs(dpll-docs
-        ${CMAKE_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/dpll
+        ${CMAKE_SOURCE_DIR}/dpll/include
+        ${CMAKE_SOURCE_DIR}/dpll/src
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         )
 else()
