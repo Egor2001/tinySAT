@@ -23,8 +23,13 @@ Tags are placed in the tags/ directory
 $ make tags
 ```
 
+## Used projects
+
+- spdlog logger library: [github](https://github.com/gabime/spdlog)
+- google test framework: [github](https://github.com/google/googletest)
+
 ## Contacts
-- [telegram](https://t.me/geome_try)
+- telegram: [@geome\_try](https://t.me/geome_try)
 - mail:
   - elchinov.es@phystech.edu
   - elchinov.es@gmail.com

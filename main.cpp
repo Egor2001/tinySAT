@@ -5,6 +5,8 @@
 #include "CGeneralSolver.hpp"
 #include "CDpllSolver.hpp"
 
+#include "spdlog/spdlog.h"
+
 using namespace tinysat;
 
 int main(int argc, const char* argv[])

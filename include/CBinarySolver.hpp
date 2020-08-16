@@ -8,8 +8,7 @@
 #include "CMatchIterator.hpp"
 #include "CException.hpp"
 #include "SFormula.hpp"
-
-#include "misc/CGraph.hpp"
+#include "CGraph.hpp"
 
 namespace tinysat {
 

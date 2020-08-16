@@ -17,5 +17,4 @@ add_library(dpll ${SOURCES})
 target_include_directories(dpll
     PUBLIC ${PROJECT_SOURCE_DIR}/
     PUBLIC ${PROJECT_SOURCE_DIR}/include/
-    PUBLIC ${PROJECT_SOURCE_DIR}/../core/
     )

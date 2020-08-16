@@ -17,19 +17,13 @@ set(SOURCES
     src/CDpllSolver.cpp
     )
 
-include(ExternalProject)
-
-ExternalProject_Add(gtest_git 
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG master
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${THIRD_PARTY_INSTALL_DIR}
-    )
-
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/core
     ${CMAKE_SOURCE_DIR}/dpll
-    ${THIRD_PARTY_INSTALL_DIR}/include)
+    ${CMAKE_SOURCE_DIR}/dpll/include
+    ${THIRD_PARTY_INSTALL_DIR}/include
+    )
 
 link_directories(
     ${CMAKE_SOURCE_DIR}/lib
@@ -38,8 +32,11 @@ link_directories(
 
 add_executable(tinySAT main.cpp ${SOURCES})
 
+# Third-party libraries
+add_subdirectory(third-party)
+
+# DPLL algo core static library
 add_subdirectory(dpll)
-target_link_libraries(tinySAT dpll)
 
 # Tests generated with GTest
 add_subdirectory(test)
@@ -51,6 +48,8 @@ add_custom_target(docs DEPENDS tinySAT-docs dpll-docs)
 # Tags generated with CTags
 add_subdirectory(tags)
 add_custom_target(tags DEPENDS tinySAT-tags dpll-tags)
+
+target_link_libraries(tinySAT dpll spdlog)
 
 install(TARGETS tinySAT
     RUNTIME DESTINATION bin
