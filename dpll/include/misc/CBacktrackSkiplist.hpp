@@ -1,33 +1,52 @@
 #ifndef TINYSAT_CBACKTRACKSKIPLIST_HPP_
 #define TINYSAT_CBACKTRACKSKIPLIST_HPP_
 
+/**
+ * @file CBacktrackSkiplist.hpp
+ * @author geome_try
+ * @date 2020
+ */
+
 #include <cstdint>
 
 #include <vector>
 #include <random>
 
+/// @brief
 namespace tinysat {
 
 //----------------------------------------
 // CBacktrackSkiplist<TData> class
 //----------------------------------------
+
+/// Skiplist able to extract/restore its nodes
+/**
+ * Holds vector of nodes with keys in ascending order
+ */
 template<typename TData>
 class CBacktrackSkiplist
 {
 public:
+    /// Null index representation
     static constexpr size_t NULL_IDX = static_cast<size_t>(-1);
+    /// Width of the skiplist
     static constexpr size_t MAX_LOG = 64u/sizeof(size_t);
 
-    class CNode;
-    class CIterator;
-    class CConstIterator;
+    class CNode; ///< Node holding extracted value
+    class CIterator; ///< Iterator class.
+    class CConstIterator; ///< ConstIterator class.
 
-    using data_type = TData;
-    using node_type = CNode;
-    using iterator = CIterator;
-    using const_iterator = CConstIterator;
+    using data_type = TData; ///< Type of internal data
+    using node_type = CNode; ///< Type of node holding extracted value
+    using iterator = CIterator; ///< BidirIt alias
+    using const_iterator = CConstIterator; ///< ConstBidirIt alias
 
     // TODO: alignas(64u) for better caching
+    
+    /// Represents block of links
+    /**
+     * Holds MAX_LOG links as indices and implements array interface
+     */
     struct SIndexBlock
     {
     public:
@@ -49,89 +68,162 @@ public:
         size_t idx_arr[MAX_LOG];
     };
 
+    /// Default ctor
     CBacktrackSkiplist() = default;
 
+    /// Copy ctor from data vector
     explicit CBacktrackSkiplist(const std::vector<TData>&);
+    /// Move ctor from data vector
     explicit CBacktrackSkiplist(std::vector<TData>&&);
 
+    /// Ctor from range
     template<typename TIter>
     CBacktrackSkiplist(TIter&&, TIter&&);
 
+    /// Rule of 5
     CBacktrackSkiplist             (const CBacktrackSkiplist&) = default;
+    /// Rule of 5
     CBacktrackSkiplist& operator = (const CBacktrackSkiplist&) = default;
 
+    /// Rule of 5
     CBacktrackSkiplist             (CBacktrackSkiplist&&) = default;
+    /// Rule of 5
     CBacktrackSkiplist& operator = (CBacktrackSkiplist&&) = default;
 
+    /// Returns size
+    /**
+     * @return elements' count
+     */
     [[nodiscard]] size_t size() const noexcept
     {
         return size_;
     }
 
+    /// Returns true iff empty
+    /**
+     * @return size() == 0
+     */
     [[nodiscard]] bool empty() const noexcept
     {
         return size() == 0u;
     }
 
+    /// STL-like interface 
+    /**
+     * @return iterator pointing to the front element
+     * @see CIterator cbegin() end() cend()
+     */
     [[nodiscard]] CIterator begin()
     {
         return CIterator(this, head_blk_[0u]);
     }
 
+    /// STL-like interface 
+    /**
+     * @return const iterator pointing to the front element
+     * @see CConstIterator cbegin() end() cend()
+     */
     [[nodiscard]] CConstIterator begin() const
     {
         return CConstIterator(this, head_blk_[0u]);
     }
 
+    /// STL-like interface 
+    /**
+     * @return const iterator pointing to the front element
+     * @see CConstIterator begin() end() cend()
+     */
     [[nodiscard]] CConstIterator cbegin() const
     {
         return begin();
     }
 
+    /// STL-like interface 
+    /**
+     * @return const iterator pointing to the past-to-end element
+     * @see CIterator begin() cbegin() cend()
+     */
     [[nodiscard]] CIterator end()
     {
         return CIterator(this, NULL_IDX);
     }
 
+    /// STL-like interface 
+    /**
+     * @return const iterator pointing to the past-to-end element
+     * @see CConstIterator begin() cbegin() cend()
+     */
     [[nodiscard]] CConstIterator end() const
     {
         return CConstIterator(this, NULL_IDX);
     }
 
+    /// STL-like interface 
+    /**
+     * @return const iterator pointing to the past-to-end element
+     * @see CConstIterator begin() cbegin() end()
+     */
     [[nodiscard]] CConstIterator cend() const
     {
         return end();
     }
 
+    /// Reassign all links basing on current data
     void reset();
 
+    /// Extract corresonding value and links
     CNode extract(CIterator);
+    /// Restore corresonding value and links
     CIterator restore(CNode&&);
 
+    /// Find value
     [[nodiscard]] CIterator find(const TData&);
+    /// Find value
     [[nodiscard]] CConstIterator find(const TData&) const;
 
+    /// Simple check for errors
     [[nodiscard]] bool ok() const noexcept;
 
+    /// Simple iostream-like output
     template<typename TStream>
     bool dump(TStream& stream) const noexcept;
 
 protected:
+    /// Gives an access to the corresponding value
+    /**
+     * @param [in] idx internal element index
+     * @return corresponding value
+     */
     [[nodiscard]] TData& at(const size_t idx)
     {
         return data_vec_[idx];
     }
 
+    /// Gives an access to the corresponding value
+    /**
+     * @param [in] idx internal element's index
+     * @return corresponding value
+     */
     [[nodiscard]] const TData& at(const size_t idx) const
     {
         return data_vec_[idx];
     }
 
+    /// Returns index of the prev element
+    /**
+     * @param [in] idx internal element's index
+     * @return prev element's index
+     */
     [[nodiscard]] size_t prev(const size_t idx) const
     {
         return (idx == NULL_IDX ? tail_blk_[0u] : prev_blk_vec_[idx][0u]);
     }
 
+    /// Returns index of the next element
+    /**
+     * @param [in] idx internal element's index
+     * @return next element's index
+     */
     [[nodiscard]] size_t next(const size_t idx) const
     {
         return next_blk_vec_[idx][0u];
@@ -152,20 +244,26 @@ private:
 //----------------------------------------
 // CBacktrackSkiplist<TData>::CNode class
 //----------------------------------------
+
+/**
+ * Holds index of extracted element
+ */
 template<typename TData>
 class CBacktrackSkiplist<TData>::CNode
 {
 public:
     friend class CBacktrackSkiplist<TData>;
 
+    /// Ctor from pointer to parent list and index
     CNode(CBacktrackSkiplist<TData>*, const size_t);
 
-    CNode             (const CNode&) = delete;
-    CNode& operator = (const CNode&) = delete;
+    CNode             (const CNode&) = delete; ///< Rule of 5
+    CNode& operator = (const CNode&) = delete; ///< Rule of 5
 
-    CNode             (CNode&&) = default;
-    CNode& operator = (CNode&&) = default;
+    CNode             (CNode&&) = default; ///< Rule of 5
+    CNode& operator = (CNode&&) = default; ///< Rule of 5
 
+    /// Access corresponding element
     [[nodiscard]] TData& get() const;
 
 private:
@@ -176,36 +274,46 @@ private:
 //----------------------------------------
 // CBacktrackSkiplist<TData>::CIterator class
 //----------------------------------------
+
+/**
+ * Implements bidirectional iterator 
+ * for the CBacktrackSkiplist template
+ */
 template<typename TData>
 class CBacktrackSkiplist<TData>::CIterator
 {
 public:
     friend class CBacktrackSkiplist<TData>;
 
-    using difference_type = std::ptrdiff_t;
-    using value_type = TData;
-    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type = std::ptrdiff_t; ///< Traits.
+    using value_type = TData; ///< Traits.
+    using iterator_category = std::bidirectional_iterator_tag; ///< Traits.
 
+    /// Default ctor
     CIterator() = default;
+
+    /// Ctor from list pointer and element index
     CIterator(CBacktrackSkiplist<TData>*, const size_t);
 
-    CIterator             (const CIterator&) = default;
-    CIterator& operator = (const CIterator&) = default;
+    CIterator             (const CIterator&) = default; ///< Rule of 5
+    CIterator& operator = (const CIterator&) = default; ///< Rule of 5
 
-    CIterator             (CIterator&&) = default;
-    CIterator& operator = (CIterator&&) = default;
+    CIterator             (CIterator&&) = default; ///< Rule of 5
+    CIterator& operator = (CIterator&&) = default; ///< Rule of 5
 
-    [[nodiscard]] TData& operator * () const;
-    [[nodiscard]] TData* operator -> () const;
+    [[nodiscard]] TData& operator * () const; ///< InputIt interface
+    [[nodiscard]] TData* operator -> () const; ///< InputIt interface
 
-    CIterator& operator ++ ();
-    CIterator& operator -- ();
+    CIterator& operator ++ (); ///< InputIt interface
+    CIterator& operator -- (); ///< BidirIt interface
 
-    const CIterator operator ++ (int);
-    const CIterator operator -- (int);
+    const CIterator operator ++ (int); ///< InputIt interface
+    const CIterator operator -- (int); ///< BidirIt interface
 
+    /// Implicit conversion to the CConstIterator
     operator CBacktrackSkiplist<TData>::CConstIterator () const;
 
+    /// InputIt interface
     [[nodiscard]] friend 
     bool operator == (const CIterator& lhs, const CIterator& rhs)
     {
@@ -213,6 +321,7 @@ public:
                (lhs.elem_idx_ == rhs.elem_idx_);
     }
 
+    /// InputIt interface
     [[nodiscard]] friend 
     bool operator != (const CIterator& lhs, const CIterator& rhs)
     {
@@ -227,34 +336,43 @@ private:
 //----------------------------------------
 // CBacktrackSkiplist<TData>::CConstIterator class
 //----------------------------------------
+
+/**
+ * Implements constant bidirectional iterator 
+ * for the CBacktrackSkiplist template
+ */
 template<typename TData>
 class CBacktrackSkiplist<TData>::CConstIterator
 {
 public:
     friend class CBacktrackSkiplist<TData>;
 
-    using difference_type = std::ptrdiff_t;
-    using value_type = const TData;
-    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type = std::ptrdiff_t; ///< Traits.
+    using value_type = const TData; ///< Traits.
+    using iterator_category = std::bidirectional_iterator_tag; ///< Traits.
 
+    /// Default ctor
     CConstIterator() = default;
+
+    /// Ctor from list pointer and element index
     CConstIterator(const CBacktrackSkiplist<TData>*, const size_t);
 
-    CConstIterator             (const CConstIterator&) = default;
-    CConstIterator& operator = (const CConstIterator&) = default;
+    CConstIterator             (const CConstIterator&) = default; ///< Rule of 5
+    CConstIterator& operator = (const CConstIterator&) = default; ///< Rule of 5
 
-    CConstIterator             (CConstIterator&&) = default;
-    CConstIterator& operator = (CConstIterator&&) = default;
+    CConstIterator             (CConstIterator&&) = default; ///< Rule of 5
+    CConstIterator& operator = (CConstIterator&&) = default; ///< Rule of 5
 
-    [[nodiscard]] const TData& operator * () const;
-    [[nodiscard]] const TData* operator -> () const;
+    [[nodiscard]] const TData& operator * () const; ///< InputIt interface
+    [[nodiscard]] const TData* operator -> () const; ///< InputIt interface
 
-    CConstIterator& operator ++ ();
-    CConstIterator& operator -- ();
+    CConstIterator& operator ++ (); ///< InputIt interface
+    CConstIterator& operator -- (); ///< BidirIt interface
 
-    const CConstIterator operator ++ (int);
-    const CConstIterator operator -- (int);
+    const CConstIterator operator ++ (int); ///< InputIt interface
+    const CConstIterator operator -- (int); ///< BidirIt interface
 
+    /// InputIt interface
     [[nodiscard]] friend 
     bool operator == (const CConstIterator& lhs, const CConstIterator& rhs)
     {
@@ -262,6 +380,7 @@ public:
                (lhs.elem_idx_ == rhs.elem_idx_);
     }
 
+    /// InputIt interface
     [[nodiscard]] friend 
     bool operator != (const CConstIterator& lhs, const CConstIterator& rhs)
     {
@@ -276,6 +395,11 @@ private:
 //----------------------------------------
 // CBacktrackSkiplist<TData>::CNode methods
 //----------------------------------------
+
+/**
+ * @param [in] list_ptr pointer to the parent list
+ * @param [in] elem_idx index of the extracted element
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CNode::
 CNode(CBacktrackSkiplist<TData>* list_ptr, const size_t elem_idx):
@@ -283,6 +407,9 @@ CNode(CBacktrackSkiplist<TData>* list_ptr, const size_t elem_idx):
     elem_idx_{ elem_idx }
 {}
 
+/**
+ * @return reference to the extracted value
+ */
 template<typename TData>
 TData&
 CBacktrackSkiplist<TData>::CNode::
@@ -294,6 +421,11 @@ get() const
 //----------------------------------------
 // CBacktrackSkiplist<TData>::CIterator methods
 //----------------------------------------
+
+/**
+ * @param [in] list_ptr pointer to the parent list
+ * @param [in] elem_idx index of the pointed-to element
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CIterator::
 CIterator(CBacktrackSkiplist<TData>* list_ptr, 
@@ -302,6 +434,9 @@ CIterator(CBacktrackSkiplist<TData>* list_ptr,
     elem_idx_{ elem_idx }
 {}
 
+/**
+ * @return reference to pointed-to value
+ */
 template<typename TData>
 TData& 
 CBacktrackSkiplist<TData>::CIterator::
@@ -310,6 +445,9 @@ operator * () const
     return list_ptr_->at(elem_idx_);
 }
 
+/**
+ * @return pointer to pointed-to value
+ */
 template<typename TData>
 TData* 
 CBacktrackSkiplist<TData>::CIterator::
@@ -318,6 +456,9 @@ operator -> () const
     return &(*(*this)); // C++ is amazing (#1)
 }
 
+/**
+ * @return *this
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CIterator& 
 CBacktrackSkiplist<TData>::CIterator::
@@ -327,6 +468,9 @@ operator ++ ()
     return *this;
 }
 
+/**
+ * @return *this
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CIterator& 
 CBacktrackSkiplist<TData>::CIterator::
@@ -336,6 +480,9 @@ operator -- ()
     return *this;
 }
 
+/**
+ * @return old *this
+ */
 template<typename TData>
 const CBacktrackSkiplist<TData>::CIterator 
 CBacktrackSkiplist<TData>::CIterator::
@@ -347,6 +494,9 @@ operator ++ (int)
     return that;
 }
 
+/**
+ * @return old *this
+ */
 template<typename TData>
 const CBacktrackSkiplist<TData>::CIterator 
 CBacktrackSkiplist<TData>::CIterator::
@@ -358,6 +508,9 @@ operator -- (int)
     return that;
 }
 
+/**
+ * @return corresponding CConstIterator
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CIterator::
 operator CBacktrackSkiplist<TData>::CConstIterator () const
@@ -368,6 +521,11 @@ operator CBacktrackSkiplist<TData>::CConstIterator () const
 //----------------------------------------
 // CBacktrackSkiplist<TData>::CIterator methods
 //----------------------------------------
+
+/**
+ * @param [in] list_ptr pointer to the parent list
+ * @param [in] elem_idx index of the pointed-to element
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CConstIterator::
 CConstIterator(const CBacktrackSkiplist<TData>* list_ptr, 
@@ -376,6 +534,9 @@ CConstIterator(const CBacktrackSkiplist<TData>* list_ptr,
     elem_idx_{ elem_idx }
 {}
 
+/**
+ * @return reference to pointed-to value
+ */
 template<typename TData>
 const TData& 
 CBacktrackSkiplist<TData>::CConstIterator::
@@ -384,6 +545,9 @@ operator * () const
     return list_ptr_->at(elem_idx_);
 }
 
+/**
+ * @return pointer to pointed-to value
+ */
 template<typename TData>
 const TData* 
 CBacktrackSkiplist<TData>::CConstIterator::
@@ -392,6 +556,9 @@ operator -> () const
     return &(*(*this)); // C++ is amazing (#2 because of copy-paste!)
 }
 
+/**
+ * @return *this
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CConstIterator& 
 CBacktrackSkiplist<TData>::CConstIterator::
@@ -401,6 +568,9 @@ operator ++ ()
     return *this;
 }
 
+/**
+ * @return *this
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CConstIterator& 
 CBacktrackSkiplist<TData>::CConstIterator::
@@ -410,6 +580,9 @@ operator -- ()
     return *this;
 }
 
+/**
+ * @return old *this
+ */
 template<typename TData>
 const CBacktrackSkiplist<TData>::CConstIterator 
 CBacktrackSkiplist<TData>::CConstIterator::
@@ -421,6 +594,9 @@ operator ++ (int)
     return that;
 }
 
+/**
+ * @return old *this
+ */
 template<typename TData>
 const CBacktrackSkiplist<TData>::CConstIterator 
 CBacktrackSkiplist<TData>::CConstIterator::
@@ -435,6 +611,10 @@ operator -- (int)
 //----------------------------------------
 // CBacktrackSkiplist<TData> methods
 //----------------------------------------
+
+/**
+ * @param [in] data_vec data vector to copy
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::
 CBacktrackSkiplist(const std::vector<TData>& data_vec):
@@ -443,6 +623,9 @@ CBacktrackSkiplist(const std::vector<TData>& data_vec):
     reset();
 }
 
+/**
+ * @param [in,out] data_vec data vector to move
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::
 CBacktrackSkiplist(std::vector<TData>&& data_vec):
@@ -451,6 +634,10 @@ CBacktrackSkiplist(std::vector<TData>&& data_vec):
     reset();
 }
 
+/**
+ * @param [in] begin_it range begin iterator
+ * @param [in] end_it range end iterator
+ */
 template<typename TData>
 template<typename TIter>
 CBacktrackSkiplist<TData>::
@@ -460,6 +647,8 @@ CBacktrackSkiplist(TIter&& begin_it, TIter&& end_it):
     reset();
 }
 
+/**
+ */
 template<typename TData>
 void CBacktrackSkiplist<TData>::reset()
 {
@@ -512,6 +701,9 @@ void CBacktrackSkiplist<TData>::reset()
     }
 }
 
+/**
+ * @return true iff no errors are found
+ */
 template<typename TData>
 bool CBacktrackSkiplist<TData>::ok() const noexcept
 {
@@ -529,6 +721,10 @@ bool CBacktrackSkiplist<TData>::ok() const noexcept
     return result;
 }
 
+/**
+ * @return ok()
+ * @see ok()
+ */
 template<typename TData>
 template<typename TStream>
 bool CBacktrackSkiplist<TData>::dump(TStream& stream) const noexcept
@@ -570,6 +766,10 @@ bool CBacktrackSkiplist<TData>::dump(TStream& stream) const noexcept
     return result;
 }
 
+/**
+ * @param [in,out] node node representing previously extracted element
+ * @return iterator pointing to the restored element
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CIterator 
 CBacktrackSkiplist<TData>::restore(CNode&& node)
@@ -596,6 +796,10 @@ CBacktrackSkiplist<TData>::restore(CNode&& node)
     return CIterator(this, idx);
 }
 
+/**
+ * @param [in] iter iterator pointing to the element to extract
+ * @return node representing the extracted element
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CNode 
 CBacktrackSkiplist<TData>::extract(const CIterator iter)
@@ -622,6 +826,10 @@ CBacktrackSkiplist<TData>::extract(const CIterator iter)
     return CNode(this, idx);
 }
 
+/**
+ * @param [in] value value to search for
+ * @return iterator pointing to the found value or end() if no such exists
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CIterator 
 CBacktrackSkiplist<TData>::find(const TData& value)
@@ -654,6 +862,10 @@ CBacktrackSkiplist<TData>::find(const TData& value)
     return CIterator(this, idx);
 }
 
+/**
+ * @param [in] value value to search for
+ * @return iterator pointing to the found value or end() if no such exists
+ */
 template<typename TData>
 CBacktrackSkiplist<TData>::CConstIterator 
 CBacktrackSkiplist<TData>::find(const TData& value) const
