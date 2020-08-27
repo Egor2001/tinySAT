@@ -12,6 +12,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(THIRD_PARTY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/third-party)
 
 set(SOURCES 
+    src/main.cpp
 	src/CBinarySolver.cpp
 	src/CGeneralSolver.cpp
     src/CDpllSolver.cpp
@@ -30,7 +31,7 @@ link_directories(
     ${THIRD_PARTY_INSTALL_DIR}/lib
     )
 
-add_executable(tinySAT main.cpp ${SOURCES})
+add_executable(tinySAT ${SOURCES})
 
 # Third-party libraries
 add_subdirectory(third-party)
