@@ -3,6 +3,8 @@
 #include "CDpllSolver.hpp"
 
 #include "gtest/gtest.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 using namespace tinysat;
 
@@ -19,7 +21,7 @@ TEST(DpllSolverTest, proceed)
         }
     };
 
-    auto solver = CDpllSolver(formula);
+    auto solver = CDpllSolver(formula, spdlog::stdout_color_mt("console"));
     auto it = solver.begin(), end = solver.end();
 
     ASSERT_NE(it, end);

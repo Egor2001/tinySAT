@@ -1,7 +1,18 @@
 #include "CDpllFormula.hpp"
 
+/**
+ * @file CDpllFormula.cpp
+ * @author geome_try
+ * @date 2020
+ * @see CDpllFormula.hpp
+ */
+
+/// @brief
 namespace tinysat {
 
+/**
+ * @param [in] formula SAT formula's copy to copy CDpllFormula from
+ */
 CDpllFormula::CDpllFormula(const SFormula& formula)
 {
     const size_t clauses_cnt = formula.clause_vec.size();
@@ -17,6 +28,9 @@ CDpllFormula::CDpllFormula(const SFormula& formula)
     }
 }
 
+/**
+ * @param [in,out] formula SAT formula to move CDpllFormula from
+ */
 CDpllFormula::CDpllFormula(SFormula&& formula)
 {
     const size_t clauses_cnt = formula.clause_vec.size();
@@ -32,8 +46,21 @@ CDpllFormula::CDpllFormula(SFormula&& formula)
     }
 }
 
+/**
+ * @return current stats data
+ */
+const CDpllFormula::SStats& 
+CDpllFormula::stats() const noexcept
+{
+    return stats_;
+}
+
+/**
+ * @return state to backtrack to
+ * @see backtrack()
+ */
 CDpllFormula::SState 
-CDpllFormula::get_state() const
+CDpllFormula::get_state() const noexcept
 {
     return SState { 
         .lit_log_idx = lit_log_stk_.size(),
@@ -41,8 +68,14 @@ CDpllFormula::get_state() const
     };
 }
 
+/**
+ * @param [in] state state to backtrack to
+ * @see get_state()
+ */
 void CDpllFormula::backtrack(const SState& state)
 {
+    stats_.unary_clause_set.clear();
+
     while (state.cls_log_idx < cls_log_stk_.size())
     {
         clauses_.restore(std::move(cls_log_stk_.top()));
@@ -61,6 +94,11 @@ void CDpllFormula::backtrack(const SState& state)
 // - to store current assignment
 // - to check for lit to be already assigned
 // - to eliminate unit clauses in-place
+
+/**
+ * @param [in] lit literal to assign boolean value to
+ * @return true if no conflict occured
+ */
 bool CDpllFormula::proceed(const int lit)
 {
     bool result = true;

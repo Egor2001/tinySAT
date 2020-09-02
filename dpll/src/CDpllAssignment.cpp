@@ -1,7 +1,18 @@
 #include "CDpllAssignment.hpp"
 
+/**
+ * @file CDpllAssignment.cpp
+ * @author geome_try
+ * @date 2020
+ * @see CDpllAssignment.hpp
+ */
+
+/// @brief
 namespace tinysat {
 
+/**
+ * @param [in] formula SAT formula to assign priorities from
+ */
 CDpllAssignment::CDpllAssignment(const SFormula& formula):
     match_(),
     sort_heap_(formula),
@@ -10,6 +21,10 @@ CDpllAssignment::CDpllAssignment(const SFormula& formula):
     match_.value_vec = std::vector(formula.params_cnt, SMatch::EValue::NONE);
 }
 
+/**
+ * @return state for backtracking
+ * @see backtrack()
+ */
 CDpllAssignment::SState CDpllAssignment::get_state() const
 {
     return SState {
@@ -17,6 +32,10 @@ CDpllAssignment::SState CDpllAssignment::get_state() const
     };
 }
 
+/**
+ * @param [in] state for backtracking
+ * @see get_state()
+ */
 void CDpllAssignment::backtrack(const SState& state)
 {
     while (state.log_idx < log_stk_.size())
@@ -26,22 +45,39 @@ void CDpllAssignment::backtrack(const SState& state)
     }
 }
 
+/**
+ * @return literal with the highest priority
+ * @see proceed()
+ */
 int CDpllAssignment::request() const
 {
     return (sort_heap_.empty() ? 0 : sort_heap_.get());
 }
 
+/**
+ * @param [in] lit literal to assign true to
+ * @see request()
+ */
 void CDpllAssignment::proceed(const int lit)
 {
     log_stk_.push(lit);
     assign(lit);
 }
 
+/**
+ * @return true if no errors detected
+ * @see dump()
+ */
 bool CDpllAssignment::ok() const noexcept
 {
     return sort_heap_.ok();
 }
 
+/**
+ * @param [in,out] stream iostream-like stream object 
+ * @return ok()
+ * @see ok()
+ */
 template<typename TStream>
 bool CDpllAssignment::dump(TStream& stream) const noexcept
 {
@@ -51,6 +87,10 @@ bool CDpllAssignment::dump(TStream& stream) const noexcept
     return ok();
 }
 
+/**
+ * @param [in] lit literal to assign true to
+ * @see revert()
+ */
 void CDpllAssignment::assign(const int lit)
 {
     if (lit == 0)
@@ -66,6 +106,10 @@ void CDpllAssignment::assign(const int lit)
     sort_heap_.extract(-lit);
 }
 
+/**
+ * @param [in] lit literal to revert assignment
+ * @see assign()
+ */
 void CDpllAssignment::revert(const int lit)
 {
     if (lit == 0)

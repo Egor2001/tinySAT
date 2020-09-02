@@ -1,11 +1,14 @@
 #include <iostream>
 
+#define SPDLOG_ACTIVE_LEVEL 0
+
 #include "SFormula.hpp"
 #include "CBinarySolver.hpp"
 #include "CGeneralSolver.hpp"
 #include "CDpllSolver.hpp"
 
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 using namespace tinysat;
 
@@ -19,7 +22,8 @@ int main(int argc, const char* argv[])
 
     auto bin_solver = CBinarySolver(formula);
     auto gen_solver = CGeneralSolver(formula);
-    auto dpll_solver = CDpllSolver(formula);
+    auto dpll_solver = CDpllSolver(formula, 
+            spdlog::stdout_color_st("console"));
 
     std::cout << "binary solver\n";
     for (const auto& match : bin_solver)

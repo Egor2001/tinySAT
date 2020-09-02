@@ -599,13 +599,22 @@ CBacktrackList<TData>::restore(CNode&& node)
 {
     CIterator result(this, node.entry_ptr_.get());
 
+    if (tail_ == node.entry_ptr_->prev)
+        tail_ = node.entry_ptr_.get();
+
     if (node.entry_ptr_->prev)
     {
+        if (node.entry_ptr_->prev->next)
+            node.entry_ptr_->prev->next->prev = node.entry_ptr_.get();
+
         node.entry_ptr_->next = std::move(node.entry_ptr_->prev->next);
         node.entry_ptr_->prev->next = std::move(node.entry_ptr_);
     }
     else
     {
+        if (head_) 
+            head_->prev = node.entry_ptr_.get();
+
         node.entry_ptr_->next = std::move(head_);
         head_ = std::move(node.entry_ptr_);
     }

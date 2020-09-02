@@ -76,16 +76,10 @@ public:
     CDpllFormula& operator = (CDpllFormula&&) = default; ///< Rule of 5
 
     /// Returns current statistics
-    /**
-     * @return current stats data
-     */
-    [[nodiscard]] const SStats& stats() const noexcept
-    {
-        return stats_;
-    }
+    [[nodiscard]] const SStats& stats() const noexcept;
 
     /// Returns current state
-    [[nodiscard]] SState get_state() const;
+    [[nodiscard]] SState get_state() const noexcept;
 
     /// Backtrack to the given state
     void backtrack(const SState&);

@@ -1,7 +1,18 @@
 #include "CDpllSortHeap.hpp"
 
+/**
+ * @file CDpllSortHeap.cpp
+ * @author geome_try
+ * @date 2020
+ * @see CDpllSortHeap.hpp
+ */
+
+/// @brief
 namespace tinysat {
 
+/**
+ * @param [in] formula formula to build heap from
+ */
 CDpllSortHeap::CDpllSortHeap(const SFormula& formula):
     lit_cnt_{ 2u*formula.params_cnt },
     size_{ lit_cnt_ },
@@ -33,11 +44,19 @@ CDpllSortHeap::CDpllSortHeap(const SFormula& formula):
     heapify();
 }
 
+/**
+ * @return heap's top literal
+ */
 int CDpllSortHeap::get() const
 {
     return heap_vec_[1u];
 }
 
+/**
+ * @param [in] lit literal to extract
+ * @return extracted literal
+ * @see restore()
+ */
 int CDpllSortHeap::extract(const int lit)
 {
     [[unlikely]] if (prior_vec_[lit2idx(lit)] < 0.0)
@@ -55,6 +74,11 @@ int CDpllSortHeap::extract(const int lit)
     return lit;
 }
 
+/**
+ * @param [in] lit extracted literal to restore
+ * @return restored literal
+ * @see extract()
+ */
 int CDpllSortHeap::restore(const int lit)
 {
     [[unlikely]] if (prior_vec_[lit2idx(lit)] > 0.0)
@@ -72,11 +96,20 @@ int CDpllSortHeap::restore(const int lit)
     return lit;
 }
 
+/**
+ * @param [in] lit literal to query
+ * @return literal's priority
+ * @see dec_prior()
+ */
 double CDpllSortHeap::get_prior(int lit) const
 {
     return prior_vec_[lit2idx(lit)];
 }
 
+/**
+ * @param [in] lit literal to decrease its priority
+ * @see get_prior()
+ */
 void CDpllSortHeap::dec_prior(int lit)
 {
     prior_sum_ -= std::abs(prior_vec_[lit2idx(lit)]);
@@ -92,6 +125,10 @@ void CDpllSortHeap::dec_prior(int lit)
         balance();
 }
 
+/**
+ * @param [in] it element's internal index
+ * @see sift_dn()
+ */
 size_t CDpllSortHeap::sift_up(size_t it)
 {
     if (it < 2u)
@@ -111,6 +148,10 @@ size_t CDpllSortHeap::sift_up(size_t it)
     return it;
 }
 
+/**
+ * @param [in] it element's internal index
+ * @see sift_up()
+ */
 size_t CDpllSortHeap::sift_dn(size_t it)
 {
     if (heap_vec_.size() < 2u*(it + 1u))
@@ -142,12 +183,18 @@ size_t CDpllSortHeap::sift_dn(size_t it)
     return it;
 }
 
+/**
+ * @see balance()
+ */
 void CDpllSortHeap::heapify()
 {
     for (size_t it = lit_cnt_; it != 0u; --it)
         sift_up(it);
 }
 
+/**
+ * @see heapify()
+ */
 void CDpllSortHeap::balance()
 {
     double factor = BALANCE_SUM/prior_sum_;
@@ -157,6 +204,10 @@ void CDpllSortHeap::balance()
         prior_sum_ += (prior_vec_[lit_cnt_ - 1u - idx] *= factor);
 }
 
+/**
+ * @return true if no errors detected
+ * @see dump()
+ */
 bool CDpllSortHeap::ok() const noexcept
 {
     bool result = true;
@@ -170,6 +221,11 @@ bool CDpllSortHeap::ok() const noexcept
     return result;
 }
 
+/**
+ * @param [in,out] stream iostream-like stream object
+ * @return ok()
+ * @see ok()
+ */
 template<typename TStream>
 bool CDpllSortHeap::dump(TStream& stream) const noexcept
 {

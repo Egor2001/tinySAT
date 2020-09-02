@@ -1,17 +1,36 @@
 #include "CDpllContext.hpp"
 
+/**
+ * @file CDpllContext.cpp
+ * @author geome_try
+ * @date 2020
+ * @see CDpllContext.hpp
+ */
+
+/// @brief
 namespace tinysat {
 
+/**
+ * @param [in] formula SAT formula to build context from via copy
+ */
 CDpllContext::CDpllContext(const SFormula& formula):
     assignment_(formula),
     formula_(formula)
 {}
 
+/**
+ * @param [in,out] formula SAT formula to build context from via move
+ */
 CDpllContext::CDpllContext(SFormula&& formula):
     assignment_(formula),
     formula_(std::move(formula))
 {}
 
+/**
+ * @return true if any solution exists
+ * @see next()
+ * @see search()
+ */
 bool CDpllContext::init()
 {
     state_stack_.push(SState {
@@ -24,14 +43,16 @@ bool CDpllContext::init()
     return search();
 }
 
+/**
+ * @return true if next solution exists
+ * @see init()
+ * @see search()
+ */
 bool CDpllContext::next()
 {
     if (!state_stack_.empty())
     {
         auto& top = state_stack_.top();
-
-        top.val = ((top.val == SMatch::EValue::TRUE) ? 
-                   SMatch::EValue::FALSE : SMatch::EValue::NONE);
 
         assignment_.backtrack(top.assignment_state);
         formula_.backtrack(top.formula_state);
@@ -40,6 +61,11 @@ bool CDpllContext::next()
     return search();
 }
 
+/**
+ * @return true if search succedes
+ * @see init()
+ * @see next()
+ */
 bool CDpllContext::search()
 {
     while (!state_stack_.empty())
@@ -92,6 +118,10 @@ bool CDpllContext::search()
     return !state_stack_.empty();
 }
 
+/**
+ * @return true if propagation doesn't imply conflicts
+ * @see proceed()
+ */
 bool CDpllContext::propagate(int lit)
 {
     while (lit != 0 && formula_.proceed(lit))
@@ -109,11 +139,23 @@ bool CDpllContext::propagate(int lit)
     return (lit == 0);
 }
 
+/**
+ * @param [in] lhs
+ * @param [in] rhs
+ * @return true if lhs and rhs are same objects
+ * @see operator!=()
+ */
 bool operator == (const CDpllContext& lhs, const CDpllContext& rhs)
 {
     return &lhs == &rhs;
 }
 
+/**
+ * @param [in] lhs
+ * @param [in] rhs
+ * @return true if lhs and rhs aren't same objects
+ * @see operator==()
+ */
 bool operator != (const CDpllContext& lhs, const CDpllContext& rhs)
 {
     return !(lhs == rhs);
