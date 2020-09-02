@@ -207,6 +207,8 @@ public:
 
     using difference_type = std::ptrdiff_t; ///< Traits
     using value_type = TData; ///< Traits
+    using reference = value_type&;
+    using pointer = value_type*;
     using iterator_category = std::bidirectional_iterator_tag; ///< Traits
 
     /// Default ctor

@@ -287,6 +287,8 @@ public:
 
     using difference_type = std::ptrdiff_t; ///< Traits.
     using value_type = TData; ///< Traits.
+    using reference = value_type&;
+    using pointer = value_type*;
     using iterator_category = std::bidirectional_iterator_tag; ///< Traits.
 
     /// Default ctor
@@ -460,7 +462,7 @@ operator -> () const
  * @return *this
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CIterator& 
+typename CBacktrackSkiplist<TData>::CIterator&
 CBacktrackSkiplist<TData>::CIterator::
 operator ++ ()
 {
@@ -472,7 +474,7 @@ operator ++ ()
  * @return *this
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CIterator& 
+typename CBacktrackSkiplist<TData>::CIterator&
 CBacktrackSkiplist<TData>::CIterator::
 operator -- ()
 {
@@ -484,7 +486,7 @@ operator -- ()
  * @return old *this
  */
 template<typename TData>
-const CBacktrackSkiplist<TData>::CIterator 
+const typename CBacktrackSkiplist<TData>::CIterator
 CBacktrackSkiplist<TData>::CIterator::
 operator ++ (int)
 {
@@ -498,7 +500,7 @@ operator ++ (int)
  * @return old *this
  */
 template<typename TData>
-const CBacktrackSkiplist<TData>::CIterator 
+const typename CBacktrackSkiplist<TData>::CIterator
 CBacktrackSkiplist<TData>::CIterator::
 operator -- (int)
 {
@@ -560,7 +562,7 @@ operator -> () const
  * @return *this
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CConstIterator& 
+typename CBacktrackSkiplist<TData>::CConstIterator&
 CBacktrackSkiplist<TData>::CConstIterator::
 operator ++ ()
 {
@@ -572,7 +574,7 @@ operator ++ ()
  * @return *this
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CConstIterator& 
+typename CBacktrackSkiplist<TData>::CConstIterator&
 CBacktrackSkiplist<TData>::CConstIterator::
 operator -- ()
 {
@@ -584,7 +586,7 @@ operator -- ()
  * @return old *this
  */
 template<typename TData>
-const CBacktrackSkiplist<TData>::CConstIterator 
+const typename CBacktrackSkiplist<TData>::CConstIterator
 CBacktrackSkiplist<TData>::CConstIterator::
 operator ++ (int)
 {
@@ -598,7 +600,7 @@ operator ++ (int)
  * @return old *this
  */
 template<typename TData>
-const CBacktrackSkiplist<TData>::CConstIterator 
+const typename CBacktrackSkiplist<TData>::CConstIterator
 CBacktrackSkiplist<TData>::CConstIterator::
 operator -- (int)
 {
@@ -771,7 +773,7 @@ bool CBacktrackSkiplist<TData>::dump(TStream& stream) const noexcept
  * @return iterator pointing to the restored element
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CIterator 
+typename CBacktrackSkiplist<TData>::CIterator
 CBacktrackSkiplist<TData>::restore(CNode&& node)
 {
     const size_t idx = std::move(node).elem_idx_;
@@ -801,7 +803,7 @@ CBacktrackSkiplist<TData>::restore(CNode&& node)
  * @return node representing the extracted element
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CNode 
+typename CBacktrackSkiplist<TData>::CNode
 CBacktrackSkiplist<TData>::extract(const CIterator iter)
 {
     const size_t idx = iter.elem_idx_;
@@ -831,7 +833,7 @@ CBacktrackSkiplist<TData>::extract(const CIterator iter)
  * @return iterator pointing to the found value or end() if no such exists
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CIterator 
+typename CBacktrackSkiplist<TData>::CIterator
 CBacktrackSkiplist<TData>::find(const TData& value)
 {
     size_t log = MAX_LOG - 1u;
@@ -867,7 +869,7 @@ CBacktrackSkiplist<TData>::find(const TData& value)
  * @return iterator pointing to the found value or end() if no such exists
  */
 template<typename TData>
-CBacktrackSkiplist<TData>::CConstIterator 
+typename CBacktrackSkiplist<TData>::CConstIterator
 CBacktrackSkiplist<TData>::find(const TData& value) const
 {
     return const_cast<CBacktrackSkiplist*>(this)->find(value);
