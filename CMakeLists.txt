@@ -14,6 +14,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
 set(THIRD_PARTY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/third-party)
 
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(TINYSAT_AS_ROOT ON)
+else()
+    set(TINYSAT_AS_ROOT OFF)
+endif()
+
 set(SOURCES 
     src/main.cpp
 	src/CBinarySolver.cpp
@@ -42,12 +48,14 @@ add_subdirectory(third-party)
 # DPLL algo core static library
 add_subdirectory(dpll)
 
+if (TINYSAT_AS_ROOT)
 # Tests generated with GTest
-add_subdirectory(test)
+    add_subdirectory(test)
 
 # Docs generated with Doxygen
-add_subdirectory(docs)
-add_custom_target(docs DEPENDS tinySAT-docs dpll-docs)
+    add_subdirectory(docs)
+    add_custom_target(docs DEPENDS tinySAT-docs dpll-docs)
+endif()
 
 # Tags generated with CTags
 add_subdirectory(tags)
