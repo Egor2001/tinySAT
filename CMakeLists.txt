@@ -20,6 +20,8 @@ else()
     set(TINYSAT_AS_ROOT OFF)
 endif()
 
+set(TINYSAT_BUILD_BINARY ${TINYSAT_AS_ROOT})
+
 set(SOURCES 
     src/main.cpp
 	src/CBinarySolver.cpp
