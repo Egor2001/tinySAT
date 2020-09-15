@@ -34,15 +34,15 @@ if (TINYSAT_AS_ROOT)
 endif()
 
 include_directories(
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/include/core
-    ${CMAKE_SOURCE_DIR}/dpll
-    ${CMAKE_SOURCE_DIR}/dpll/include
+    ${tinySAT_SOURCE_DIR}/include
+    ${tinySAT_SOURCE_DIR}/include/core
+    ${tinySAT_SOURCE_DIR}/dpll
+    ${tinySAT_SOURCE_DIR}/dpll/include
     ${THIRD_PARTY_INSTALL_DIR}/include
     )
 
 link_directories(
-    ${CMAKE_SOURCE_DIR}/lib
+    ${tinySAT_SOURCE_DIR}/lib
     ${THIRD_PARTY_INSTALL_DIR}/lib
     )
 
