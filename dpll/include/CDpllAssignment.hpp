@@ -9,9 +9,10 @@
 
 #include <stack>
 
-#include "CException.hpp"
-#include "SFormula.hpp"
-#include "SMatch.hpp"
+#include "core/CException.hpp"
+#include "core/SFormula.hpp"
+#include "core/SMatch.hpp"
+
 #include "CDpllSortHeap.hpp"
 
 /// @brief

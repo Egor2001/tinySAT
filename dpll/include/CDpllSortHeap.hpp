@@ -7,7 +7,7 @@
  * @date 2020
  */
 
-#include "SFormula.hpp"
+#include "core/SFormula.hpp"
 
 /// @brief
 namespace tinysat {

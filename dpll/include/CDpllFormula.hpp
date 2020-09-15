@@ -12,7 +12,7 @@
 #include <stack>
 #include <unordered_set>
 
-#include "SFormula.hpp"
+#include "core/SFormula.hpp"
 
 #include "misc/CBacktrackSkiplist.hpp"
 #include "misc/CBacktrackList.hpp"
