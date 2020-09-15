@@ -81,10 +81,14 @@ if(TINYSAT_AS_ROOT)
         OBJECTS DESTINATION obj
         )
 else()
-    # TODO: to replace with CMAKE_INSTALL_LIBDIR/CMAKE_INSTALL_INCLUDEDIR
+    # TODO: to replace with CMAKE_INSTALL_LIBDIR
     install(TARGETS tinySAT
         LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}/lib
         ARCHIVE DESTINATION ${CMAKE_INSTALL_DIR}/lib
-        DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_DIR}/include
+        )
+
+    # TODO: to replace with CMAKE_INSTALL_INCLUDEDIR
+    install(DIRECTORY include/ 
+        DESTINATION ${CMAKE_INSTALL_DIR}/include
         )
 endif()
