@@ -15,9 +15,9 @@ set(SOURCES
     src/CDpllContext.cpp
     )
 
-add_library(dpll ${SOURCES})
-
-target_include_directories(dpll
-    PUBLIC ${tinySAT_SOURCE_DIR}/
-    PUBLIC ${tinySAT_SOURCE_DIR}/include/
+include_directories(
+    ${tinySAT_SOURCE_DIR}/
+    ${tinySAT_SOURCE_DIR}/include/
     )
+
+add_library(dpll ${SOURCES})
