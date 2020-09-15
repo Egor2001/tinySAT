@@ -16,6 +16,7 @@ set(SOURCES
     )
 
 include_directories(
+    include/
     ${tinySAT_SOURCE_DIR}/
     ${tinySAT_SOURCE_DIR}/include/
     )
