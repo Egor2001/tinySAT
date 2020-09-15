@@ -21,11 +21,17 @@ else()
 endif()
 
 set(SOURCES 
-    src/main.cpp
-	src/CBinarySolver.cpp
-	src/CGeneralSolver.cpp
+    src/CBinarySolver.cpp
+    src/CGeneralSolver.cpp
     src/CDpllSolver.cpp
     )
+
+if (TINYSAT_AS_ROOT)
+    set(SOURCES 
+        src/main.cpp
+        ${SOURCES}
+        )
+endif()
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
@@ -40,7 +46,11 @@ link_directories(
     ${THIRD_PARTY_INSTALL_DIR}/lib
     )
 
-add_executable(tinySAT ${SOURCES})
+if (TINYSAT_AS_ROOT)
+    add_executable(tinySAT ${SOURCES})
+else()
+    add_library(tinySAT SHARED ${SOURCES})
+endif()
 
 # Third-party libraries
 add_subdirectory(third-party)
@@ -55,16 +65,26 @@ if (TINYSAT_AS_ROOT)
 # Docs generated with Doxygen
     add_subdirectory(docs)
     add_custom_target(docs DEPENDS tinySAT-docs dpll-docs)
-endif()
 
 # Tags generated with CTags
-add_subdirectory(tags)
-add_custom_target(tags DEPENDS tinySAT-tags dpll-tags)
+    add_subdirectory(tags)
+    add_custom_target(tags DEPENDS tinySAT-tags dpll-tags)
+endif()
 
 target_link_libraries(tinySAT dpll spdlog)
 
-install(TARGETS tinySAT
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    OBJECTS DESTINATION obj
-    )
+if(TINYSAT_AS_ROOT)
+    # TODO: to replace with CMAKE_INSTALL_LIBDIR/CMAKE_INSTALL_BINDIR
+    install(TARGETS tinySAT
+        RUNTIME DESTINATION ${TINYSAT_INSTALL_DIR}/bin
+        LIBRARY DESTINATION lib
+        OBJECTS DESTINATION obj
+        )
+else()
+    # TODO: to replace with CMAKE_INSTALL_LIBDIR/CMAKE_INSTALL_INCLUDEDIR
+    install(TARGETS tinySAT
+        LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}/lib
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_DIR}/lib
+        DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_DIR}/include
+        )
+endif()
